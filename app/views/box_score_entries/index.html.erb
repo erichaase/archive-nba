@@ -1,0 +1,59 @@
+<h1>BoxScoreEntries#index</h1>
+<p>Find me in app/views/box_score_entries/index.html.erb</p>
+
+<table border="1">
+  <tr>
+    <td>espn_i</td>
+    <td>fname</td>
+    <td>lname</td>
+    <td>team</td>
+    <td>pos</td>
+    <td>min</td>
+    <td>fgm</td>
+    <td>fga</td>
+    <td>tpm</td>
+    <td>tpa</td>
+    <td>ftm</td>
+    <td>fta</td>
+    <td>oreb</td>
+    <td>dreb</td>
+    <td>reb</td>
+    <td>ast</td>
+    <td>stl</td>
+    <td>blk</td>
+    <td>to</td>
+    <td>pf</td>
+    <td>plusminus</td>
+    <td>pts</td>
+    <td>verified</td>
+  </tr>
+
+<% @boxscoreentries.each do |bse| %>
+  <tr>
+    <td><%= bse.espn_id %></td>
+    <td><%= bse.fname %></td>
+    <td><%= bse.lname %></td>
+    <td><%= bse.team %></td>
+    <td><%= bse.pos %></td>
+    <td><%= bse.min %></td>
+    <td><%= bse.fgm %></td>
+    <td><%= bse.fga %></td>
+    <td><%= bse.tpm %></td>
+    <td><%= bse.tpa %></td>
+    <td><%= bse.ftm %></td>
+    <td><%= bse.fta %></td>
+    <td><%= bse.oreb %></td>
+    <td><%= bse.dreb %></td>
+    <td><%= bse.reb %></td>
+    <td><%= bse.ast %></td>
+    <td><%= bse.stl %></td>
+    <td><%= bse.blk %></td>
+    <td><%= bse.to %></td>
+    <td><%= bse.pf %></td>
+    <td><%= bse.plusminus %></td>
+    <td><%= bse.pts %></td>
+    <td><%= bse.verified %></td>
+  </tr>
+<% end %>
+
+</table>

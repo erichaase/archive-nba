@@ -1,0 +1,51 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  espn_id: 1
+  fname: MyString
+  lname: MyString
+  team: MyString
+  pos: MyString
+  min: 1
+  fgm: 1
+  fga: 1
+  tpm: 1
+  tpa: 1
+  ftm: 1
+  fta: 1
+  oreb: 1
+  dreb: 1
+  reb: 1
+  ast: 1
+  stl: 1
+  blk: 1
+  to: 1
+  pf: 1
+  plusminus: MyString
+  pts: 1
+  verified: false
+
+two:
+  espn_id: 1
+  fname: MyString
+  lname: MyString
+  team: MyString
+  pos: MyString
+  min: 1
+  fgm: 1
+  fga: 1
+  tpm: 1
+  tpa: 1
+  ftm: 1
+  fta: 1
+  oreb: 1
+  dreb: 1
+  reb: 1
+  ast: 1
+  stl: 1
+  blk: 1
+  to: 1
+  pf: 1
+  plusminus: MyString
+  pts: 1
+  verified: false
