@@ -3,6 +3,10 @@ Nba::Application.routes.draw do
 
   get "home/index"
 
+  resources :box_score_entries
+
+  match 'data' => 'data#index'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -16,7 +20,6 @@ Nba::Application.routes.draw do
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
-  resources :box_score_entries
 
   # Sample resource route with options:
   #   resources :products do
