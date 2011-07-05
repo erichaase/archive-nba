@@ -1,15 +1,16 @@
 // todo
-//   jQuery Dialog for warnings/errors
+//   jQuery Dialog for warnings/errors?
 //   jQuery Progressbar?
 
-window.onload = function () {
+$(document).ready(function(){
   setupDatePickers();
   setupButtons();
-  requestData();
-}
+  //requestData();
+});
+
 
 function setupDatePickers() {
-  var dates = $( "#fromDateExt, #toDateExt" ).datepicker({
+  var dates = $("input#fromDateExt,input#toDateExt").datepicker({
     defaultDate: new Date(),
     minDate: new Date(2010, 9, 26),
     maxDate: new Date(2011, 5, 12),
@@ -17,9 +18,9 @@ function setupDatePickers() {
     autoSize: true,
     showAnim: 'fade',
     duration: 'slow',
-    onSelect: function( selectedDate ) {
+    onSelect: function (selectedDate) {
       var option = this.id == "fromDateExt" ? "minDate" : "maxDate",
-        instance = $( this ).data( "datepicker" ),
+        instance = $(this).data( "datepicker" ),
         date = $.datepicker.parseDate(
           instance.settings.dateFormat ||
           $.datepicker._defaults.dateFormat,
@@ -27,57 +28,49 @@ function setupDatePickers() {
       dates.not( this ).datepicker( "option", option, date );
     }
   });
-  $( "#fromDateExt" ).datepicker( "option", "altField", "#fromDateInt" );
-  $( "#toDateExt" ).datepicker( "option", "altField", "#toDateInt" );
+  $("input#fromDateExt").datepicker( "option", "altField", "input#fromDateInt" );
+  $("input#toDateExt").datepicker( "option", "altField", "input#toDateInt" );
 }
 
 function setupButtons() {
-  $( "input:submit" ).button();
-  $( "input:submit" ).click(function() {
-    fromDate = document.getElementById("fromDateInt").value;
-    toDate   = document.getElementById("toDateInt"  ).value;
-
+  $("input:submit").button();
+  $("input:submit").click(function() {
+    var fromDate = $("input#fromDateInt").val();
+    var toDate   = $("input#toDateInt"  ).val();
     // assert that if toDate is set, fromDate must be set too
-
     requestData(fromDate,toDate);
   });
 }
 
 function requestData (fromDate, toDate) {
   // arguments are optional
-  // assert that fromDate and toDate follow valid format
+  // assert that fromDate and toDate follow valid format if specified
+  // standard way to pass js arguments
 
-  document.getElementById("status").innerHTML = "Updating";
+  $("p#status").html("Updating");
 
-// use jquery ajax to make XMLHttpRequest
+  // url = "players.json?...
+  // don't pass parameters if dates aren't specified
+  url = "data.json?fromDate=" + fromDate + "&toDate=" + toDate;
 
-  var oXmlHttp = new XMLHttpRequest();
-
-// build url based on fromDate and toDate
-// "players.json?fromDate=20110607&toDate=20110607"
-  url = "data.json?fromDate=20110607&toDate=20110607"
-
-  oXmlHttp.open("GET", url, true);
-  oXmlHttp.onreadystatechange = function () {
-    if (oXmlHttp.readyState == 4) {
-      if (oXmlHttp.status == 200) {
-        // assert that oXmlHttp.getResponseHeader("Content-Type") contains "application/json"
-        fillTable(oXmlHttp.responseText);
-        document.getElementById("status").innerHTML = "&nbsp;";
-      } else {
-        document.getElementById("status").innerHTML = "An error occurred while updating (statusText = '" + oXmlHttp.statusText + "')";
-      }
-    }
-  };
-  oXmlHttp.send(null);
+  $.getJSON(url,function (data) {
+    // assert that oXmlHttp.getResponseHeader("Content-Type") contains "application/json"
+    // add error checking to determine if json data is valid
+    // error/warning if status != 200
+    //   $("p#status").html("An error occurred while updating (statusText = '" + oXmlHttp.statusText + "')");
+    fillTable(data);
+    $("p#status").html("&nbsp;");
+  });
 }
 
-function fillTable (sJsonData) {
-// validate json data passed
-  var table = "  <table border=1>\n";
-// row of table headers
-  JSON.parse(sJsonData).forEach ( function (element, index, array ) {
-    var bse = element["box_score_entry"];
+function fillTable (oJsonData) {
+  // add error checking to determine if json data is valid
+
+  table = "\n  <table border=1>\n";
+  // row of table headers go here
+
+  $.each(oJsonData, function(index, value) {
+    var bse = value["box_score_entry"];
     table += "    <tr>\n";
     table += "      <td>" + bse.id + "</td>\n";
     table += "      <td>" + bse.espn_id + "</td>\n";
@@ -107,6 +100,8 @@ function fillTable (sJsonData) {
     table += "      <td>" + bse.updated_at + "</td>\n";
     table += "    </tr>\n";
   });
+
   table += "  </table>\n";
-  document.getElementById("table").innerHTML = table
+
+  $("div#table").html(table);
 }
