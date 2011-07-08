@@ -1,5 +1,3 @@
 # NBA
 
-This is the first application for
-[*NBA*](http://www.erichaase.com/)
-by [Eric Haase](http://www.erichaase.com/).
+This is the [*NBA*](http://www.erichaase.com/) application by [Eric Haase](http://www.erichaase.com/).

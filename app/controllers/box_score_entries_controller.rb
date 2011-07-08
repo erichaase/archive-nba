@@ -1,21 +1,15 @@
 require 'open-uri'
+require 'date'
 
 # todo
-#   store html in database
-#   let rails manage ArgumentErrors?
+#   Cache-Control: no-cache
 #   rails error logging
-#   see comments
+#   see comments below
 #   double-check ALL regular expressions
-#   make plusminus sql data type a number
-#   throw exceptions
-#   team name
-#   other source to verify data
-#   add documentation
-#     rdoc
-#     code
+#   nba team name
 
-#class MyCrazyError < StandardError
-#end
+class MyError < StandardError
+end
 
 class BoxScoreEntriesController < ApplicationController
 
@@ -25,12 +19,13 @@ class BoxScoreEntriesController < ApplicationController
 
     BoxScoreEntry.all.each { |x| x.delete }
 
-    begin
-      getBoxScoreEntries(:uri => 'http://scores.espn.go.com/nba/boxscore?gameId=310605006').each { |bse| bse.save }
-    rescue ArgumentError => e
-      puts "#{e.backtrace[0]}: #{e.message} (#{e.class})"
-      e.backtrace.each { |x| puts "\tfrom #{x}" }
-    end
+    params = {
+      :url    => "http://scores.espn.go.com/nba/boxscore?gameId=310515004", 
+      :date   => Date.new(2011,05,15),
+      :source => "espn"
+    }
+
+    boxScoreNew(params).each { |bse| bse.save }
 
     @boxscoreentries = BoxScoreEntry.all
 
@@ -40,18 +35,28 @@ class BoxScoreEntriesController < ApplicationController
     end
   end
 
+  # BoxScore.new()
+  # move this code to BoxScore model
   # examples
   #   <tr align="right" class="odd player-46-130"><td style="text-align:left;" nowrap><a href="http://espn.go.com/nba/player/_/id/130/brian-cardinal">Brian Cardinal</a>, PF</td><td>12</td><td>1-1</td><td>1-1</td><td>0-0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>2</td><td>+18</td><td>3</td></tr>
   #   <tr align="right" class="even player-46-1966"><td style="text-align:left;" nowrap><a href="http://espn.go.com/nba/player/_/id/1966/lebron-james">LeBron James</a>, SF</td><td>40</td><td>9-15</td><td>2-5</td><td>1-4</td><td>1</td><td>3</td><td>4</td><td>6</td><td>1</td><td>1</td><td>6</td><td>2</td><td>-24</td><td>21</td></tr>
-  def getBoxScoreEntries ( params )
+  def boxScoreNew ( params )
+    raise ArgumentError, "'params' argument is not a hash"                 unless params.class == Hash
+    raise ArgumentError, "'params' hash argument doesn't have :uri key"    unless params.has_key?(:url)
+    raise ArgumentError, "'params' hash argument doesn't have :date key"   unless params.has_key?(:date)
+    raise ArgumentError, "'params' hash argument doesn't have :source key" unless params.has_key?(:source)
+    raise ArgumentError, "'params[:url]' argument isn't a String"          unless params[:url].class == String
+    raise ArgumentError, "'params[:date]' argument isn't a Date"           unless params[:date].class == Date
+    raise ArgumentError, "'params[:source]' argument isn't a String"       unless params[:source].class == String
 
-    raise ArgumentError, "argument is not a hash" unless params.class == Hash
-    raise ArgumentError, "hash argument doesn't have :uri key" unless params.has_key?(:uri)
+    @url    = params[:url]
+    @date   = params[:date]
+    @source = params[:source]
+    @html   = open(@url).read
 
-    boxScoreEntries = []
-
-    open(params[:uri]).read.scan(RE_PLAYER) { |href, name, pos, rest|
-
+    @boxScoreEntries = []
+    # put the following in a function?
+    @html.scan(RE_PLAYER) { |href, name, pos, rest|
       stats = rest.split(%r`\s*<\s*/\s*td\s*>\s*<\s*td[^>]*>\s*`)
 
       if stats.size >= 1
@@ -67,7 +72,6 @@ class BoxScoreEntriesController < ApplicationController
         #   'dnp coach's decision'
         #   not entered game
         #   etc.
-        next
       when 13..14
         # assertions
         #   data types
@@ -113,14 +117,14 @@ class BoxScoreEntriesController < ApplicationController
 
         end
 
-        boxScoreEntries << BoxScoreEntry.new(bse)
+        @boxScoreEntries << BoxScoreEntry.new(bse)
 
       else
-        # warning (throw exception?)
+        warn "size of 'stats' is #{stats.size}, should be 1, 13 or 14: #{stats.inspect}"
       end
     }
 
-    return boxScoreEntries
+    return @boxScoreEntries
 
   end
 
