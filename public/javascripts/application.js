@@ -49,9 +49,8 @@ function requestData (fromDate, toDate) {
 
   $("p#status").html("Updating");
 
-  // url = "players.json?...
   // don't pass parameters if dates aren't specified
-  url = "data.json?fromDate=" + fromDate + "&toDate=" + toDate;
+  url = "ratings.json?fromDate=" + fromDate + "&toDate=" + toDate;
 
   $.getJSON(url,function (data) {
     // assert that oXmlHttp.getResponseHeader("Content-Type") contains "application/json"
@@ -61,6 +60,7 @@ function requestData (fromDate, toDate) {
     fillTable(data);
     $("p#status").html("&nbsp;");
   });
+  // update $("p#status") if getJSON failed
 }
 
 function fillTable (oJsonData) {

@@ -5,7 +5,7 @@ Nba::Application.routes.draw do
 
   resources :box_score_entries
 
-  match 'data' => 'data#index'
+  match 'ratings' => 'ratings#index'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
